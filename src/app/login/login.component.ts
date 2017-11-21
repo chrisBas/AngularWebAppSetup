@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from "../user";
+import { LoginService } from '../login.service';
+import { LoginSession } from '../loginsession';
 
 @Component({
   selector: 'app-login',
@@ -8,6 +10,8 @@ import { User } from "../user";
 })
 export class LoginComponent implements OnInit {
 
+  loginSession: LoginSession;
+
   private user: User = {
     username:"",
     password: ""
@@ -15,13 +19,32 @@ export class LoginComponent implements OnInit {
   private username: String = "";
   private password: String = "";
 
-  constructor() { }
+  constructor(private loginService: LoginService) { }
 
   ngOnInit() {
   }
 
   tryLogin() {
-    console.log(this.user);
+    if(this.validateUser){
+      this.loginService.doLogin(this.user)
+        .subscribe(loginSession => this.validateLogin(loginSession));
+    }
+  }
+
+  private validateLogin(loginSession: LoginSession){
+    this.loginSession = loginSession;
+    if(this.loginSession.isLoggedIn){
+      console.log("AM LOGGED IN");
+      // TODO: NAVIGATE TO LOGGED IN PAGE
+    } else {
+      // TODO: DISPLAY INVALID CREDENTIALS
+    }
+  }
+
+  private validateUser(): boolean{
+    // TODO: VALIDATE USERNAME/PASSWORD ARE VALID
+    // TODO: DISPLAY INVALID REASONINGS IF-NOT-VALID
+    return true;
   }
 
 }
