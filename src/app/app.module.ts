@@ -5,11 +5,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { LoginService } from './_services/login.service';
+import { UserService } from './_services/user.service';
 
 import { HomeComponent } from './_controllers/home/home.component';
 import { MainnavComponent } from './_controllers/mainnav/mainnav.component';
 import { LoginComponent } from './_controllers/login/login.component';
+import { ProfileComponent } from './_controllers/profile/profile.component';
 
 
 
@@ -18,7 +19,8 @@ import { LoginComponent } from './_controllers/login/login.component';
     AppComponent,
     LoginComponent,
     HomeComponent,
-    MainnavComponent
+    MainnavComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +28,7 @@ import { LoginComponent } from './_controllers/login/login.component';
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [LoginService],
+  providers: [UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

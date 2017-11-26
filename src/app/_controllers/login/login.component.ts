@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from "../../_models/user";
-import { LoginService } from '../../_services/login.service';
-import { LoginSession } from '../../_models/loginsession';
+import { User } from "../../_models/user.model";
+import { UserService } from '../../_services/user.service';
+import { UserServiceResponse } from '../../_models/user.response';
+import { Token } from '../../_models/token.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,42 +12,87 @@ import { LoginSession } from '../../_models/loginsession';
 })
 export class LoginComponent implements OnInit {
 
-  loginSession: LoginSession;
-
+  private isLoggingIn = true;
+  private isValidUsername = true;
+  private invalidUsername:String;
+  private isValidPassword = true;
+  private invalidPassword:String;
+  private isValidLogin = true;
+  private invalidLogin:String;
+  
   private user: User = {
     username:"",
-    password: ""
+    password: "",
+    firstname:"",
+    lastname: ""
   };
-  private username: String = "";
-  private password: String = "";
 
-  constructor(private loginService: LoginService) { }
+  constructor(private router: Router, private loginService: UserService) { }
 
   ngOnInit() {
+    if(sessionStorage.getItem("globalJWT")){
+      this.router.navigate(['profile']);
+    }
+  }
+
+  alternateLogin(){
+    this.isLoggingIn = !this.isLoggingIn;
+  }
+
+  trySignup(){
+    console.log("signing up")
   }
 
   tryLogin() {
-    if(this.validateUser){
-      this.loginService.doLogin(this.user)
-        .subscribe(loginSession => this.validateLogin(loginSession));
+    if(sessionStorage.getItem("globalJWT")){
+      this.router.navigate(['profile']);
+    } else {
+      if(this.validateUser()){
+        this.loginService.doLogin(this.user)
+          .subscribe(
+            userServiceResponse => {
+              this.validateLogin(userServiceResponse)
+            }, error => {
+              console.log(error); 
+            });
+      }
     }
     return false;
   }
 
-  private validateLogin(loginSession: LoginSession){
-    this.loginSession = loginSession;
-    if(this.loginSession.content.token){
-      console.log("AM LOGGED IN");
-      // TODO: NAVIGATE TO LOGGED IN PAGE
+  private validateLogin(userServiceResponse: UserServiceResponse){
+    if(userServiceResponse.isSuccess){
+      sessionStorage.setItem("globalJWT", (<Token>userServiceResponse.content).token.toString());
+      this.router.navigate(['profile']);
     } else {
-      // TODO: DISPLAY INVALID CREDENTIALS
+      if((<any>userServiceResponse.content).status){
+        this.isValidLogin = false;
+        this.invalidLogin = "Error occurred with service, please try again soon.";
+        // TODO: LOG SOMEWHERE FOR ANALYSIS
+      } else {
+        this.isValidLogin = false;
+        this.invalidLogin = userServiceResponse.message;
+      }
     }
   }
 
-  private validateUser(): boolean{
-    // TODO: VALIDATE USERNAME/PASSWORD ARE VALID
-    // TODO: DISPLAY INVALID REASONINGS IF-NOT-VALID
-    return true;
+  private validateUser(): Boolean{
+    var truthFlag:Boolean = true;
+    this.isValidUsername = true;
+    this.isValidPassword = true;
+
+    if(this.user.username.length < 4 ){
+      this.isValidUsername = false;
+      this.invalidUsername = "Username must be 5 or more characters"
+      truthFlag = false;
+    }
+    if(this.user.password.length < 4 ){
+      this.isValidPassword = false;
+      this.invalidPassword = "Password must be 5 or more characters"
+      truthFlag = false;
+    }
+    
+    return truthFlag;
   }
 
 }

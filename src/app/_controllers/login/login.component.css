@@ -1,0 +1,8 @@
+.form-input{
+    margin-bottom: 25px;
+}
+
+.error-msg {
+    color: red;
+    padding-left: 50px;
+}
