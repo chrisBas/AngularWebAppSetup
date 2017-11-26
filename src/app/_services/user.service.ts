@@ -14,11 +14,20 @@ const httpOptions = {
 export class UserService {
   private baseUrl = "http://localhost:3000/";
   private pathLogin = "public/login";
+  private pathSignup = "public/signup"
   
   constructor(private http: HttpClient) { }
 
   doLogin(user:User): Observable<UserServiceResponse> {
     return this.http.post<UserServiceResponse>(this.baseUrl+this.pathLogin, user, httpOptions)
+      .pipe(
+        map(response => response),
+        catchError((error: any) => this.handleError(error))
+      )
+  }
+
+  doSignup(user:User): Observable<UserServiceResponse> {
+    return this.http.post<UserServiceResponse>(this.baseUrl+this.pathSignup, user, httpOptions)
       .pipe(
         map(response => response),
         catchError((error: any) => this.handleError(error))

@@ -40,7 +40,21 @@ export class LoginComponent implements OnInit {
   }
 
   trySignup(){
-    console.log("signing up")
+    if(sessionStorage.getItem("globalJWT")){
+      this.router.navigate(['profile']);
+    } else {
+      if(this.validateUser()){
+        this.loginService.doSignup(this.user)
+          .subscribe(
+            userServiceResponse => {
+              this.validateLogin(userServiceResponse)
+            }, error => {
+              // TODO: FIND IF THIS EVER IS EXECUTED AND HANDLE
+              console.error(error); 
+            });
+      }
+    }
+    return false;
   }
 
   tryLogin() {
@@ -53,7 +67,8 @@ export class LoginComponent implements OnInit {
             userServiceResponse => {
               this.validateLogin(userServiceResponse)
             }, error => {
-              console.log(error); 
+              // TODO: FIND IF THIS EVER IS EXECUTED AND HANDLE
+              console.error(error); 
             });
       }
     }
@@ -67,10 +82,14 @@ export class LoginComponent implements OnInit {
     } else {
       if((<any>userServiceResponse.content).status){
         this.isValidLogin = false;
-        this.invalidLogin = "Error occurred with service, please try again soon.";
+        this.invalidLogin = "Error occurred with service, please try again soon";
         // TODO: LOG SOMEWHERE FOR ANALYSIS
-      } else {
+      } else if ((<any>userServiceResponse.content).errno == 1062) {
         this.isValidLogin = false;
+        this.invalidLogin = "Username is already taken";
+      }else {
+        this.isValidLogin = false;
+        console.log(userServiceResponse)
         this.invalidLogin = userServiceResponse.message;
       }
     }
