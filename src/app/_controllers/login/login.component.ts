@@ -19,6 +19,10 @@ export class LoginComponent implements OnInit {
   private invalidPassword:String;
   private isValidLogin = true;
   private invalidLogin:String;
+  private isValidLastname = true;
+  private invalidLastname:String;
+  private isValidFirstname = true;  
+  private invalidFirstname:String;
   
   private user: User = {
     username:"",
@@ -43,7 +47,7 @@ export class LoginComponent implements OnInit {
     if(sessionStorage.getItem("globalJWT")){
       this.router.navigate(['profile']);
     } else {
-      if(this.validateUser()){
+      if(this.validateNewUser()){
         this.loginService.doSignup(this.user)
           .subscribe(
             userServiceResponse => {
@@ -108,6 +112,26 @@ export class LoginComponent implements OnInit {
     if(this.user.password.length < 4 ){
       this.isValidPassword = false;
       this.invalidPassword = "Password must be 5 or more characters"
+      truthFlag = false;
+    }
+    
+    return truthFlag;
+  }
+
+  private validateNewUser(): Boolean{
+    this.validateUser();
+    var truthFlag:Boolean = true;
+    this.isValidLastname = true;
+    this.isValidFirstname = true;
+
+    if(this.user.firstname.length == 0){
+      this.isValidFirstname = false;
+      this.invalidFirstname = "A firstname is required";
+      truthFlag = false;
+    }
+    if(this.user.lastname.length == 0 ){
+      this.isValidLastname= false;
+      this.invalidLastname = "A lastname is required";
       truthFlag = false;
     }
     
