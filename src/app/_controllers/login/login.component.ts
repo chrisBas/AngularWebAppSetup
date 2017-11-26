@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from "../user";
-import { LoginService } from '../login.service';
-import { LoginSession } from '../loginsession';
+import { User } from "../../_models/user";
+import { LoginService } from '../../_services/login.service';
+import { LoginSession } from '../../_models/loginsession';
 
 @Component({
   selector: 'app-login',
@@ -29,11 +29,12 @@ export class LoginComponent implements OnInit {
       this.loginService.doLogin(this.user)
         .subscribe(loginSession => this.validateLogin(loginSession));
     }
+    return false;
   }
 
   private validateLogin(loginSession: LoginSession){
     this.loginSession = loginSession;
-    if(this.loginSession.isLoggedIn){
+    if(this.loginSession.content.token){
       console.log("AM LOGGED IN");
       // TODO: NAVIGATE TO LOGGED IN PAGE
     } else {

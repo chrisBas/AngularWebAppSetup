@@ -1,0 +1,13 @@
+<div class="navbar-more-overlay"></div>
+<nav class="navbar navbar-inverse navbar-fixed-top animate">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+    <ul class="nav navbar-nav navbar-right mobile-bar">
+      <li *ngFor="let navItem of navItems">
+          <a routerLink="/{{navItem.path}}"><span></span>{{navItem.displayName}}</a>
+      </li>
+    </ul>
+  </div>
+</nav>
