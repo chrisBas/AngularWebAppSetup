@@ -58,10 +58,10 @@ export class LoginService {
     } else {
       if((<any>userServiceResponse.content).status){
         this.setStatusMessage("Error occurred with service, please try again soon");
+                // TODO: LOG SOMEWHERE FOR ANALYSIS
         return false;
-        
-        // TODO: LOG SOMEWHERE FOR ANALYSIS
       } else if ((<any>userServiceResponse.content).errno == 1062) {
+        // USER IS ALREADY TAKEN
         this.setStatusMessage("Username is already taken")
         return false;
       }else {

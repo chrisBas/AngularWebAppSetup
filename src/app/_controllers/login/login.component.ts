@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
           .subscribe(
             boolResponse => {
               if(boolResponse) 
-                this.router.navigate(['profile'])
+                this.router.navigate(['auth/profile'])
               this.invalidLogin = this.loginService.getStatusMessage()
               this.isValidLogin = false;
             }, error => {
@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
   }
 
   tryLogin() {
-    if(sessionStorage.getItem("globalJWT")){
+    if(this.loginService.isLoggedIn()){
       this.router.navigate(['auth/profile']);
     } else {
       if(this.validateUser()){
@@ -105,8 +105,7 @@ export class LoginComponent implements OnInit {
   }
 
   private validateNewUser(): Boolean{
-    this.validateUser();
-    var truthFlag:Boolean = true;
+    var truthFlag:Boolean = this.validateUser();
     this.isValidLastname = true;
     this.isValidFirstname = true;
 
