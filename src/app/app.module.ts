@@ -3,15 +3,14 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AuthenticateModule } from './authenticate.module';
 
-import { UserService } from './_services/user.service';
+import { LoginService } from './_services/login.service';
 
+import { AppComponent } from './_controllers/app/app.component';
+import { LoginComponent } from './_controllers/login/login.component';
 import { HomeComponent } from './_controllers/home/home.component';
 import { MainnavComponent } from './_controllers/mainnav/mainnav.component';
-import { LoginComponent } from './_controllers/login/login.component';
-import { ProfileComponent } from './_controllers/profile/profile.component';
-
 
 
 @NgModule({
@@ -19,16 +18,16 @@ import { ProfileComponent } from './_controllers/profile/profile.component';
     AppComponent,
     LoginComponent,
     HomeComponent,
-    MainnavComponent,
-    ProfileComponent
+    MainnavComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    AuthenticateModule,    
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [UserService],
+  providers: [LoginService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

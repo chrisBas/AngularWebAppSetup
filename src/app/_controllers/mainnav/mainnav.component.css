@@ -100,3 +100,7 @@ body.navbar-more-show  {
 		display: none;
 	}
 }
+
+li>a.active {
+	color: #fff;
+}

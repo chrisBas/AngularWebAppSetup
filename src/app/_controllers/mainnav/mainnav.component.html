@@ -6,8 +6,9 @@
     </div>
     <ul class="nav navbar-nav navbar-right mobile-bar">
       <li *ngFor="let navItem of navItems">
-          <a routerLink="/{{navItem.path}}"><span></span>{{navItem.displayName}}</a>
+          <a routerLink="/{{navItem.path}}" routerLinkActive="active">{{navItem.displayName}}</a>
       </li>
+      <li><a (click)="logOut()">Logout</a></li>
     </ul>
   </div>
 </nav>

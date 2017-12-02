@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from "../../_models/user.model";
-import { UserService } from '../../_services/user.service';
+import { LoginService } from '../../_services/login.service';
 import { UserServiceResponse } from '../../_models/user.response';
 import { Token } from '../../_models/token.model';
 import { Router } from '@angular/router';
@@ -31,11 +31,11 @@ export class LoginComponent implements OnInit {
     lastname: ""
   };
 
-  constructor(private router: Router, private loginService: UserService) { }
+  constructor(private router: Router, private loginService: LoginService) { }
 
   ngOnInit() {
-    if(sessionStorage.getItem("globalJWT")){
-      this.router.navigate(['profile']);
+    if(this.loginService.isLoggedIn()){
+      this.router.navigate(['auth/profile']);
     }
   }
 
@@ -44,14 +44,17 @@ export class LoginComponent implements OnInit {
   }
 
   trySignup(){
-    if(sessionStorage.getItem("globalJWT")){
-      this.router.navigate(['profile']);
+    if(this.loginService.isLoggedIn()){
+      this.router.navigate(['auth/profile']);
     } else {
       if(this.validateNewUser()){
-        this.loginService.doSignup(this.user)
+        this.loginService.signup(this.user)
           .subscribe(
-            userServiceResponse => {
-              this.validateLogin(userServiceResponse)
+            boolResponse => {
+              if(boolResponse) 
+                this.router.navigate(['profile'])
+              this.invalidLogin = this.loginService.getStatusMessage()
+              this.isValidLogin = false;
             }, error => {
               // TODO: FIND IF THIS EVER IS EXECUTED AND HANDLE
               console.error(error); 
@@ -63,13 +66,16 @@ export class LoginComponent implements OnInit {
 
   tryLogin() {
     if(sessionStorage.getItem("globalJWT")){
-      this.router.navigate(['profile']);
+      this.router.navigate(['auth/profile']);
     } else {
       if(this.validateUser()){
-        this.loginService.doLogin(this.user)
+        this.loginService.login(this.user)
           .subscribe(
-            userServiceResponse => {
-              this.validateLogin(userServiceResponse)
+            boolResponse => {
+              if(boolResponse) 
+                this.router.navigate(['auth/profile'])
+              this.invalidLogin = this.loginService.getStatusMessage()
+              this.isValidLogin = false;
             }, error => {
               // TODO: FIND IF THIS EVER IS EXECUTED AND HANDLE
               console.error(error); 
@@ -77,26 +83,6 @@ export class LoginComponent implements OnInit {
       }
     }
     return false;
-  }
-
-  private validateLogin(userServiceResponse: UserServiceResponse){
-    if(userServiceResponse.isSuccess){
-      sessionStorage.setItem("globalJWT", (<Token>userServiceResponse.content).token.toString());
-      this.router.navigate(['profile']);
-    } else {
-      if((<any>userServiceResponse.content).status){
-        this.isValidLogin = false;
-        this.invalidLogin = "Error occurred with service, please try again soon";
-        // TODO: LOG SOMEWHERE FOR ANALYSIS
-      } else if ((<any>userServiceResponse.content).errno == 1062) {
-        this.isValidLogin = false;
-        this.invalidLogin = "Username is already taken";
-      }else {
-        this.isValidLogin = false;
-        console.log(userServiceResponse)
-        this.invalidLogin = userServiceResponse.message;
-      }
-    }
   }
 
   private validateUser(): Boolean{

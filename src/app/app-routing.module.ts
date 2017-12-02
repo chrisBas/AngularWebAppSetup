@@ -7,9 +7,9 @@ import { ProfileComponent } from './_controllers/profile/profile.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
+  /*{path '**', component: PageNotFoundComponent},*/
   { path: 'login', component: LoginComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'profile', component: ProfileComponent}
+  { path: 'home', component: HomeComponent }
 ];
 
 @NgModule({
